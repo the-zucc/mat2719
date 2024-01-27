@@ -1,0 +1,148 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[many]{tcolorbox}
+\usepackage{tikz}
+\usepackage[letterpaper, total={6in, 8in}]{geometry}
+\newtheoremstyle{pasdepoint}
+  {\topsep}{\topsep}%
+  {}{}%
+  {\bfseries}{\vspace*{0.05in}\\}%
+  {0pt}{}%
+\theoremstyle{pasdepoint}
+\newtheorem{definition}{Définition}
+\tcolorboxenvironment{definition}{
+    rounded corners,
+    colback=yellow!5,
+    before skip=0.2in,
+    after skip=0.2in
+}
+\newtheoremstyle{break}
+  {\topsep}{\topsep}%
+  {}{}%
+  {\bfseries}{}%
+  {\newline}{}%
+\theoremstyle{break}
+\newtheorem{example}{Exemple}
+\tcolorboxenvironment{example}{
+    rounded corners,
+    colback=blue!5,
+    before skip=0.2in,
+    after skip=0.2in
+}
+
+\theoremstyle{pasdepoint}
+\newtheorem*{pourquoi}{Pourquoi ?}
+\tcolorboxenvironment{pourquoi}{
+    rounded corners,
+    colback=yellow!10,
+    before skip=0.2in,
+    after skip=0.2in
+}
+
+\newtheorem*{remark}{Remarque}
+\tcolorboxenvironment{remark}{
+    rounded corners,
+    colback=green!15,
+    before skip=0.2in,
+    after skip=0.2in
+}
+\begin{document}
+
+\section{Définitions préalables}
+
+\begin{definition}[Graphe]
+    Un \textbf{graphe} $G$ est une paire ordonnée $G = (V, E)$ composée de :
+    \begin{itemize}
+        \item Un ensemble $V$ de \textit{sommet}, qui représente les points du graphe.
+        \item Un ensemble $E$ d'\textit{arêtes}, qui sont des paires non ordonnées de sommets. Les arêtes relient les sommets entre eux.
+    \end{itemize}
+\end{definition}
+
+En d'autres termes, un graphe est une structure de données utilisée pour modéliser un ensemble de relations entre des paires d'objets. Chaque sommet dans le graphe représente un objet, et chaque arête représente une relation entre deux objets.
+
+    
+\begin{example}[Graphe]
+    \begin{tikzpicture}
+        % Les nœuds
+        \node (A) at (0,0) {A};
+        \node (B) at (2,0) {B};
+        \node (C) at (1,-1.5) {C};
+        \node (D) at (3,-1.5) {D};
+        \node (E) at (4.5,0) {E};
+
+        % Les arêtes
+        \draw (A) -- (B);
+        \draw (B) -- (C);
+        \draw (C) -- (A);
+        \draw (C) -- (D);
+        \draw (D) -- (E);
+    \end{tikzpicture}
+
+    Ici, $V = \{A, B, C, D, E\}$ et $E = \{(A, B), (B, C), (C, A), (C, D), (D, E)\}$.
+\end{example}
+
+Les graphes sont largement utilisés dans divers domaines pour modéliser et résoudre des problèmes complexes. En informatique, ils servent à représenter des réseaux sociaux, des itinéraires de navigation, des structures de données, et bien plus encore. Dans le domaine des transports, les graphes sont utilisés pour optimiser les itinéraires, la logistique et la gestion du trafic. En biologie, ils aident à modéliser les interactions entre protéines dans les réseaux de régulation génétique. En mathématiques, les graphes sont un outil essentiel pour la théorie des graphes, tandis qu'en chimie, ils sont utilisés pour représenter des molécules. En résumé, les graphes sont une structure de données polyvalente avec de nombreuses applications pratiques.
+
+\begin{definition}[Chaîne de Markov]
+    Une \textbf{chaîne de Markov}, notée $(Z_n)_{n \geq 0}$, est un type spécifique de processus stochastique discret satisfaisant la propriété de Markov. Cette propriété stipule que, donné l'état présent, les états futurs sont indépendants des états passés. Formellement, pour tous les états $i$ et $j$ et tout $n \geq 0$, on a :
+    \[
+    P(Z_{n+1} = j | Z_n = i, Z_{n-1} = i_{n-1}, \ldots, Z_0 = i_0) = P(Z_{n+1} = j | Z_n = i)
+    \]
+
+    Dans le contexte d'une marche aléatoire sur un graphe $G = (V, E)$, la chaîne de Markov peut être décrite comme suit :
+    \begin{itemize}
+        \item Chaque sommet du graphe $V$ représente un état possible de la chaîne.
+        \item Les arêtes $E$ du graphe correspondent aux transitions possibles entre les états.
+        \item La matrice de probabilités de transition $P$, où $p_{ij}$ représente la probabilité de transition de l'état $i$ à l'état $j$.
+        \item $Z_n$ représente l'état de la chaîne à l'instant $n$, c'est-à-dire le n-ième sommet visité par la marche aléatoire.
+    \end{itemize}
+    \begin{pourquoi}
+        L'utilité de cette définition se trouve dans conclusions qui peuvent en être tirées.
+
+        La \textbf{marche aléatoire discrète} sur un graphe est un exemple classique d'une chaîne de Markov, où les transitions entre les états sont déterminées aléatoirement. Dans ce contexte, le graphe $G = (V, E)$ modélise la structure de la chaîne de Markov. Ainsi, dans une marche aléatoire discrète, la progression d'un sommet à un autre sur un graphe suit la loi des probabilités définie par la matrice $P$, illustrant le comportement d'une chaîne de Markov dans le contexte d'un graphe.
+
+        Plus clairement, une \textbf{marche aléatoire discrète} est \textbf{toujours} une chaîne de Markov.
+    \end{pourquoi}
+\end{definition}
+
+Pour être répétitif: une marche aléatoire discrète est généralement considérée comme un exemple classique de chaîne de Markov. Dans une marche aléatoire discrète, l'état futur (c'est-à-dire le prochain sommet visité dans le graphe) dépend uniquement de l'état actuel et pas des états précédents. Cette caractéristique satisfait la propriété fondamentale des chaînes de Markov, où la probabilité de transition vers l'état suivant ne dépend que de l'état actuel.
+
+En termes simples, dans une marche aléatoire discrète sur un graphe, lorsqu'un individu se déplace d'un sommet à un autre, son choix du prochain sommet à visiter dépend uniquement de sa position actuelle et des probabilités de transition associées à cette position, et non de la manière dont il est arrivé à ce sommet. Cette indépendance par rapport à l'historique du chemin parcouru est exactement ce qui définit une chaîne de Markov.
+
+\begin{remark}[lien entre marche aléatoire sur un graphe et sur la droite des entiers]
+    Une \textbf{marche aléatoire sur un graphe} et une \textbf{marche aléatoire sur la droite des entiers} (\(\mathbb{Z}\)) sont deux exemples de processus stochastiques, en particulier des chaînes de Markov, mais avec des structures sous-jacentes différentes.
+
+\begin{itemize}
+    \item Dans une \textbf{marche aléatoire sur un graphe}, chaque sommet représente un état et les arêtes définissent les transitions possibles entre les états. La probabilité de transition d'un sommet à un autre est définie par la matrice de probabilités de transition du graphe.
+    \item Dans une \textbf{marche aléatoire sur \(\mathbb{Z}\)}, les états sont les entiers et les transitions se font typiquement d'un entier à son voisin immédiat (par exemple, de \(n\) à \(n+1\) ou \(n-1\)). La simplicité de la structure de \(\mathbb{Z}\) conduit souvent à des règles de transition plus simples.
+\end{itemize}
+
+Une \textbf{marche aléatoire sur} \(\mathbb{Z}\) peut être considérée dans le cadre plus général d'une marche aléatoire sur un graphe. Pour ce faire, conceptualisons \(\mathbb{Z}\) comme un graphe \(G = (V, E)\) où:
+\begin{itemize}
+    \item L'ensemble des sommets \(V\) correspond à l'ensemble \(\mathbb{Z}\) des entiers.
+    \item L'ensemble des arêtes \(E\) ainsi que la matrice de transition \(\mathbb{P}\) définit les transitions possibles entre les entiers.
+\end{itemize}
+
+Dans cette interprétation, une \textit{marche aléatoire sur} \(\mathbb{Z}\) est une marche sur le graphe \(G\), où la probabilité de transition de l'état \(i\) à l'état \(j\) (c'est-à-dire de l'entier \(i\) à l'entier \(j\)) est déterminée par une matrice de probabilités ou une règle spécifique. Cette approche permet une plus grande flexibilité dans la définition des transitions et peut inclure des marches avec des sauts plus longs ou des règles de transition complexes.
+\end{remark}
+
+\section{Réversibilité d'une marche aléatoire}
+
+\begin{definition}[Marche aléatoire réversible]
+    Considérons une \textbf{marche aléatoire réversible} définie sur un graphe $G = (V, E)$, où $(Z_n)_{n \in \mathbb{N}}$ représente une chaîne de Markov sur les sommets du graphe. Une telle marche est dite réversible par rapport à une distribution $\pi : V \rightarrow (0, +\infty)$ si elle satisfait la condition de réversibilité suivante :
+
+\[
+\pi(x)p(x, y) = \pi(y)p(y, x) \quad \text{pour tous les sommets } x, y \in V
+\]
+
+où $p(x, y)$ représente la probabilité de transition de l'état $x$ à l'état $y$. Cette relation signifie que pour tout couple de sommets $x$ et $y$, le produit de la probabilité de se déplacer de $x$ à $y$ et de la mesure stationnaire $\pi$ en $x$ est égal au produit de la probabilité de se déplacer de $y$ à $x$ et de la mesure stationnaire $\pi$ en $y$.
+
+La réversibilité d'une marche aléatoire est une propriété importante qui implique que, dans un état d'équilibre, le processus se comporte de manière identique dans le temps, que l'on observe son évolution en avant ou en arrière. Dans le cadre des chaînes de Markov et des marches aléatoires sur des graphes, la réversibilité peut offrir des insights significatifs sur la structure du graphe et sur la dynamique du processus stochastique.
+
+\end{definition}
+\end{document}
