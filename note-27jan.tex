@@ -145,4 +145,32 @@ où $p(x, y)$ représente la probabilité de transition de l'état $x$ à l'éta
 La réversibilité d'une marche aléatoire est une propriété importante qui implique que, dans un état d'équilibre, le processus se comporte de manière identique dans le temps, que l'on observe son évolution en avant ou en arrière. Dans le cadre des chaînes de Markov et des marches aléatoires sur des graphes, la réversibilité peut offrir des insights significatifs sur la structure du graphe et sur la dynamique du processus stochastique.
 
 \end{definition}
+
+\begin{definition}[Fonction Harmonique]
+    Une fonction \(f\) est dite \textbf{harmonique} sur un ensemble de sommets \(S\) d'un graphe si, pour chaque sommet \(v \in S\), la valeur de \(f\) en \(v\) est égale à la moyenne pondérée des valeurs de \(f\) sur les sommets voisins de \(v\). Formellement, pour un sommet \(v\) et ses voisins \(N(v)\),
+    \[
+    f(v) = \sum_{u \in N(v)} p(v, u) f(u)
+    \]
+    où \(p(v, u)\) est la probabilité de transition du sommet \(v\) au sommet \(u\).
+\end{definition}
+
+\begin{remark}[\(\pi\) n'est pas nécessairement harmonique, même dans le cas d'une marche réversible]
+    
+Selon la définition donnée d'une \textbf{marche aléatoire réversible}, la fonction \(\pi : V \rightarrow (0, +\infty)\) est une distribution qui satisfait la condition de réversibilité \(\pi(x)p(x, y) = \pi(y)p(y, x)\) pour tous les sommets \(x, y \in V\). Cette condition assure que \(\pi\) est une mesure stationnaire ou d'équilibre pour la chaîne de Markov, mais elle ne nécessite pas que \(\pi\) soit une fonction harmonique.
+
+Ainsi, bien que la mesure stationnaire \(\pi\) joue un rôle crucial dans la caractérisation des marches aléatoires réversibles, elle n'est pas synonyme d'une fonction harmonique selon la définition classique de l'harmonicité dans le cadre des processus stochastiques et de la théorie des graphes.
+
+\end{remark}
+
+\begin{definition}[Conductance]
+La \textbf{conductance} entre deux sommets \(x\) et \(y\) dans un graphe \(G = (V, E)\), dans le contexte d'une marche aléatoire réversible, est définie par \(C(x, y) = \pi(x)p(x, y)\), où :
+\begin{itemize}
+    \item \(\pi : V \rightarrow (0, +\infty)\) est une distribution sur les sommets du graphe, souvent interprétée comme une mesure stationnaire ou une distribution d'équilibre.
+    \item \(p(x, y)\) est la probabilité de transition de l'état \(x\) à l'état \(y\).
+\end{itemize}
+
+La conductance mesure la "facilité" ou la "capacité" avec laquelle la marche peut se déplacer de \(x\) à \(y\), en tenant compte de la distribution \(\pi\). Dans le cadre d'une marche aléatoire réversible, où \(\pi(x)p(x, y) = \pi(y)p(y, x)\) pour tous les sommets \(x, y \in V\), la conductance satisfait la propriété de symétrie \(C(x, y) = C(y, x)\). Cette symétrie reflète la nature réversible de la marche, où la probabilité de transition dans un sens est équilibrée par la probabilité de transition dans le sens inverse, pondérée par la mesure stationnaire.
+
+La notion de conductance est cruciale dans l'analyse des propriétés de mélange et de diffusion des marches aléatoires sur des graphes, en particulier dans le contexte des chaînes de Markov réversibles.
+\end{definition}
 \end{document}
