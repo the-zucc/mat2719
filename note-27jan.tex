@@ -8,6 +8,11 @@
 \usepackage[many]{tcolorbox}
 \usepackage{tikz}
 \usepackage[letterpaper, total={6in, 8in}]{geometry}
+
+\title{MAT2719 -- notes de cours détaillées}
+\date{Selon le cours d'Alexander Fribergh, Hiver 2024}
+\author{Laurier Lavoie-Giasson, avec l'aide de ChatGPT 4}
+
 \newtheoremstyle{pasdepoint}
   {\topsep}{\topsep}%
   {}{}%
@@ -51,7 +56,27 @@
     before skip=0.2in,
     after skip=0.2in
 }
+
+\newtheorem*{notation}{Notation}
+\tcolorboxenvironment{notation}{
+    rounded corners,
+    colback=orange!20,
+    before skip=0.2in,
+    after skip=0.2in
+}
+
+\newtheorem*{prop}{Proposition}
+\tcolorboxenvironment{prop}{
+    rounded corners,
+    colback=yellow!20,
+    before skip=0.2in,
+    after skip=0.2in
+}
 \begin{document}
+
+\begin{titlepage}
+    \maketitle
+\end{titlepage}
 
 \section{Définitions préalables}
 
@@ -89,88 +114,203 @@ En d'autres termes, un graphe est une structure de données utilisée pour modé
 Les graphes sont largement utilisés dans divers domaines pour modéliser et résoudre des problèmes complexes. En informatique, ils servent à représenter des réseaux sociaux, des itinéraires de navigation, des structures de données, et bien plus encore. Dans le domaine des transports, les graphes sont utilisés pour optimiser les itinéraires, la logistique et la gestion du trafic. En biologie, ils aident à modéliser les interactions entre protéines dans les réseaux de régulation génétique. En mathématiques, les graphes sont un outil essentiel pour la théorie des graphes, tandis qu'en chimie, ils sont utilisés pour représenter des molécules. En résumé, les graphes sont une structure de données polyvalente avec de nombreuses applications pratiques.
 
 \begin{definition}[Chaîne de Markov]
-    Une \textbf{chaîne de Markov}, notée $(Z_n)_{n \geq 0}$, est un type spécifique de processus stochastique discret satisfaisant la propriété de Markov. Cette propriété stipule que, donné l'état présent, les états futurs sont indépendants des états passés. Formellement, pour tous les états $i$ et $j$ et tout $n \geq 0$, on a :
+    Une \textbf{chaîne de Markov}, notée $(Z_n)_{n \geq 0}$, est un type spécifique de processus stochastique discret satisfaisant la propriété de Markov, qui stipule que, donné l'état présent, les états futurs sont indépendants des états passés. Formellement, pour tous les états $i$ et $j$ et tout $n \geq 0$, on a :
     \[
     P(Z_{n+1} = j | Z_n = i, Z_{n-1} = i_{n-1}, \ldots, Z_0 = i_0) = P(Z_{n+1} = j | Z_n = i)
     \]
-
-    Dans le contexte d'une marche aléatoire sur un graphe $G = (V, E)$, la chaîne de Markov peut être décrite comme suit :
-    \begin{itemize}
-        \item Chaque sommet du graphe $V$ représente un état possible de la chaîne.
-        \item Les arêtes $E$ du graphe correspondent aux transitions possibles entre les états.
-        \item La matrice de probabilités de transition $P$, où $p_{ij}$ représente la probabilité de transition de l'état $i$ à l'état $j$.
-        \item $Z_n$ représente l'état de la chaîne à l'instant $n$, c'est-à-dire le n-ième sommet visité par la marche aléatoire.
-    \end{itemize}
-    \begin{pourquoi}
-        L'utilité de cette définition se trouve dans conclusions qui peuvent en être tirées.
-
-        La \textbf{marche aléatoire discrète} sur un graphe est un exemple classique d'une chaîne de Markov, où les transitions entre les états sont déterminées aléatoirement. Dans ce contexte, le graphe $G = (V, E)$ modélise la structure de la chaîne de Markov. Ainsi, dans une marche aléatoire discrète, la progression d'un sommet à un autre sur un graphe suit la loi des probabilités définie par la matrice $P$, illustrant le comportement d'une chaîne de Markov dans le contexte d'un graphe.
-
-        Plus clairement, une \textbf{marche aléatoire discrète} est \textbf{toujours} une chaîne de Markov.
-    \end{pourquoi}
 \end{definition}
+
+\begin{definition}[Marche aléatoire sur un graphe]
+    Considérons un graphe $G = (V, E)$, où chaque sommet dans $V$ représente un état possible et chaque arête dans $E$ indique une transition possible entre deux états. Une \textbf{marche aléatoire} sur ce graphe est un processus où, à chaque étape, le mouvement de l'état actuel vers un état voisin est déterminé par une règle de probabilité. 
+
+    Plus formellement, si on note par $Z_n$ l'état de la marche à l'étape $n$, alors pour tout état $i \in V$ et tout état voisin $j \in V$ (tel que $(i, j) \in E$), la probabilité de transition de $i$ à $j$ est donnée par $p_{ij}$, un élément de la matrice de probabilités de transition $P$. La marche aléatoire commence à un état initial donné et se déplace d'un sommet à un autre suivant les probabilités définies dans $P$.
+\end{definition}
+
+\begin{pourquoi}
+    La distinction entre une chaîne de Markov et une marche aléatoire sur un graphe est importante pour comprendre les dynamiques spécifiques de la marche. Tandis qu'une chaîne de Markov se focalise sur la propriété de mémoire limitée des états futurs, une marche aléatoire sur un graphe met en lumière la structure sous-jacente du graphe et la manière dont cette structure influence les transitions entre les états. Chaque marche aléatoire sur un graphe est un exemple de chaîne de Markov, illustrant comment les règles de probabilité de transitions entre les sommets modèlent le comportement du processus stochastique.
+\end{pourquoi}
 
 Pour être répétitif: une marche aléatoire discrète est généralement considérée comme un exemple classique de chaîne de Markov. Dans une marche aléatoire discrète, l'état futur (c'est-à-dire le prochain sommet visité dans le graphe) dépend uniquement de l'état actuel et pas des états précédents. Cette caractéristique satisfait la propriété fondamentale des chaînes de Markov, où la probabilité de transition vers l'état suivant ne dépend que de l'état actuel.
 
 En termes simples, dans une marche aléatoire discrète sur un graphe, lorsqu'un individu se déplace d'un sommet à un autre, son choix du prochain sommet à visiter dépend uniquement de sa position actuelle et des probabilités de transition associées à cette position, et non de la manière dont il est arrivé à ce sommet. Cette indépendance par rapport à l'historique du chemin parcouru est exactement ce qui définit une chaîne de Markov.
 
+\begin{notation}[Probabilité de transition dans une marche aléatoire]
+    Considérons une marche aléatoire \( (Z_n)_{n \in \mathbb{N}} \) sur un graphe. On définira la probabilité de transition \( p(x, y) \) d'un sommet \( x \) à un sommet \( y \) comme la probabilité que la marche se déplace de \( x \) à \( y \) en une seule étape. Formellement, pour deux sommets \( x \) et \( y \) du graphe,
+
+    \[
+    p(x, y) = P(Z_{n+1} = y | Z_n = x)
+    \]
+
+    où \( P(Z_{n+1} = y | Z_n = x) \) est la probabilité conditionnelle que le prochain état de la marche soit \( y \), étant donné que l'état actuel est \( x \).
+\end{notation}
+
 \begin{remark}[lien entre marche aléatoire sur un graphe et sur la droite des entiers]
     Une \textbf{marche aléatoire sur un graphe} et une \textbf{marche aléatoire sur la droite des entiers} (\(\mathbb{Z}\)) sont deux exemples de processus stochastiques, en particulier des chaînes de Markov, mais avec des structures sous-jacentes différentes.
 
-\begin{itemize}
-    \item Dans une \textbf{marche aléatoire sur un graphe}, chaque sommet représente un état et les arêtes définissent les transitions possibles entre les états. La probabilité de transition d'un sommet à un autre est définie par la matrice de probabilités de transition du graphe.
-    \item Dans une \textbf{marche aléatoire sur \(\mathbb{Z}\)}, les états sont les entiers et les transitions se font typiquement d'un entier à son voisin immédiat (par exemple, de \(n\) à \(n+1\) ou \(n-1\)). La simplicité de la structure de \(\mathbb{Z}\) conduit souvent à des règles de transition plus simples.
-\end{itemize}
+    \begin{itemize}
+        \item Dans une \textbf{marche aléatoire sur un graphe}, chaque sommet représente un état et les arêtes définissent les transitions possibles entre les états. La probabilité de transition d'un sommet à un autre est définie par la matrice de probabilités de transition du graphe.
+        \item Dans une \textbf{marche aléatoire sur \(\mathbb{Z}\)}, les états sont les entiers et les transitions se font typiquement d'un entier à son voisin immédiat (par exemple, de \(n\) à \(n+1\) ou \(n-1\)). La simplicité de la structure de \(\mathbb{Z}\) conduit souvent à des règles de transition plus simples.
+    \end{itemize}
 
-Une \textbf{marche aléatoire sur} \(\mathbb{Z}\) peut être considérée dans le cadre plus général d'une marche aléatoire sur un graphe. Pour ce faire, conceptualisons \(\mathbb{Z}\) comme un graphe \(G = (V, E)\) où:
-\begin{itemize}
-    \item L'ensemble des sommets \(V\) correspond à l'ensemble \(\mathbb{Z}\) des entiers.
-    \item L'ensemble des arêtes \(E\) ainsi que la matrice de transition \(\mathbb{P}\) définit les transitions possibles entre les entiers.
-\end{itemize}
+    Une \textbf{marche aléatoire sur} \(\mathbb{Z}\) peut être considérée dans le cadre plus général d'une marche aléatoire sur un graphe. Pour ce faire, conceptualisons \(\mathbb{Z}\) comme un graphe \(G = (V, E)\) où:
+    \begin{itemize}
+        \item L'ensemble des sommets \(V\) correspond à l'ensemble \(\mathbb{Z}\) des entiers.
+        \item L'ensemble des arêtes \(E\) ainsi que la matrice de transition \(\mathbb{P}\) définit les transitions possibles entre les entiers.
+    \end{itemize}
 
-Dans cette interprétation, une \textit{marche aléatoire sur} \(\mathbb{Z}\) est une marche sur le graphe \(G\), où la probabilité de transition de l'état \(i\) à l'état \(j\) (c'est-à-dire de l'entier \(i\) à l'entier \(j\)) est déterminée par une matrice de probabilités ou une règle spécifique. Cette approche permet une plus grande flexibilité dans la définition des transitions et peut inclure des marches avec des sauts plus longs ou des règles de transition complexes.
+    Dans cette interprétation, une \textit{marche aléatoire sur} \(\mathbb{Z}\) est une marche sur le graphe \(G\), où la probabilité de transition de l'état \(i\) à l'état \(j\) (c'est-à-dire de l'entier \(i\) à l'entier \(j\)) est déterminée par une matrice de probabilités ou une règle spécifique. Cette approche permet une plus grande flexibilité dans la définition des transitions et peut inclure des marches avec des sauts plus longs ou des règles de transition complexes.
 \end{remark}
+
+\begin{definition}[Temps de frappe]
+    Considérons un graphe \( G = (V, E) \) et un sous-ensemble \( U \subseteq V \). Soit \( W = V \setminus U \) et \( s \in U \).\\
+
+    Le \textbf{temps de frappe} \( T_W \) pour un ensemble \( W \) est le premier instant \( n \geq 0 \) où la marche aléatoire \( Z_n \) atteint un sommet dans \( W \). Formellement, 
+    \[
+    T_W = \min\{n \geq 0 : Z_n \in W\}
+    \]
+
+    Le \textbf{temps de frappe strictement positif} \(T_W^+\) pour un ensemble \( W \) est le premier instant \( n > 0 \) où la marche aléatoire \( Z_n \) atteint un sommet dans \( W \). Formellement,
+    \[
+    T_W^+ = \min\{n > 0 : Z_n \in W\}
+    \]
+\end{definition}
+
+\begin{definition}[Transience et Récurrence]
+    Soit une marche aléatoire \( (Z_n)_{n \in \mathbb{N}} \) sur un graphe \( G = (V, E) \) et soit \( x \in V \) un sommet du graphe. 
+    
+    \begin{itemize}
+        \item \textbf{Récurrence :} Le sommet \( x \) est dit \textit{récurrent} si la probabilité qu'il soit revisité est de 1, c'est-à-dire si la probabilité que la marche, ayant commencé en \( x \), retourne à \( x \) en un temps fini est de 1. Formellement, \( x \) est récurrent si
+        \[
+        P_x[T_x^+ < \infty] = 1
+        \]
+        où \( T_x^+ \) est le temps de frappe strictement positif de \( x \), c'est-à-dire le premier instant \( n > 0 \) tel que \( Z_n = x \).
+    
+        \item \textbf{Transience :} Le sommet \( x \) est dit \textit{transient} si la probabilité qu'il soit revisité est inférieure à 1. Autrement dit, \( x \) est transient si la probabilité que la marche ne retourne jamais à \( x \) après l'avoir quitté est non nulle. Formellement, \( x \) est transient si
+        \[
+        P_x[T_x^+ = \infty] > 0
+        \]
+        ou, de manière équivalente, si \( P_x[T_x^+ < \infty] < 1 \).
+    \end{itemize}
+\end{definition}
 
 \section{Réversibilité d'une marche aléatoire}
 
 \begin{definition}[Marche aléatoire réversible]
     Considérons une \textbf{marche aléatoire réversible} définie sur un graphe $G = (V, E)$, où $(Z_n)_{n \in \mathbb{N}}$ représente une chaîne de Markov sur les sommets du graphe. Une telle marche est dite réversible par rapport à une distribution $\pi : V \rightarrow (0, +\infty)$ si elle satisfait la condition de réversibilité suivante :
 
-\[
-\pi(x)p(x, y) = \pi(y)p(y, x) \quad \text{pour tous les sommets } x, y \in V
-\]
+    \[
+    \pi(x)p(x, y) = \pi(y)p(y, x) \quad \text{pour tous les sommets } x, y \in V
+    \]
 
-où $p(x, y)$ représente la probabilité de transition de l'état $x$ à l'état $y$. Cette relation signifie que pour tout couple de sommets $x$ et $y$, le produit de la probabilité de se déplacer de $x$ à $y$ et de la mesure stationnaire $\pi$ en $x$ est égal au produit de la probabilité de se déplacer de $y$ à $x$ et de la mesure stationnaire $\pi$ en $y$.
-
-La réversibilité d'une marche aléatoire est une propriété importante qui implique que, dans un état d'équilibre, le processus se comporte de manière identique dans le temps, que l'on observe son évolution en avant ou en arrière. Dans le cadre des chaînes de Markov et des marches aléatoires sur des graphes, la réversibilité peut offrir des insights significatifs sur la structure du graphe et sur la dynamique du processus stochastique.
+    où $p(x, y)$ représente la probabilité de transition de l'état $x$ à l'état $y$.
 
 \end{definition}
+
+Cette relation signifie que pour tout couple de sommets $x$ et $y$, le produit de la probabilité de se déplacer de $x$ à $y$ et de la mesure stationnaire $\pi$ en $x$ est égal au produit de la probabilité de se déplacer de $y$ à $x$ et de la mesure stationnaire $\pi$ en $y$.
+
+La réversibilité d'une marche aléatoire est une propriété importante qui implique que, dans un état d'équilibre, le processus se comporte de manière identique dans le temps, que l'on observe son évolution en avant ou en arrière. Dans le cadre des chaînes de Markov et des marches aléatoires sur des graphes, la réversibilité peut offrir des indices significatifs sur la structure du graphe et sur la dynamique du processus stochastique.
+\begin{definition}[Conductance]
+    La \textbf{conductance} entre deux sommets \(x\) et \(y\) dans un graphe \(G = (V, E)\), dans le contexte d'une marche aléatoire réversible, est définie par \(C(x, y) = \pi(x)p(x, y)\), où :
+    \begin{itemize}
+        \item \(\pi : V \rightarrow (0, +\infty)\) est une distribution sur les sommets du graphe, souvent interprétée comme une mesure stationnaire ou une distribution d'équilibre.
+        \item \(p(x, y)\) est la probabilité de transition de l'état \(x\) à l'état \(y\).
+    \end{itemize}
+
+    La conductance mesure la "facilité" ou la "capacité" avec laquelle la marche peut se déplacer de \(x\) à \(y\), en tenant compte de la distribution \(\pi\). Dans le cadre d'une marche aléatoire réversible, où \(\pi(x)p(x, y) = \pi(y)p(y, x)\) pour tous les sommets \(x, y \in V\), la conductance satisfait la propriété de symétrie \(C(x, y) = C(y, x)\). Cette symétrie reflète la nature réversible de la marche, où la probabilité de transition dans un sens est équilibrée par la probabilité de transition dans le sens inverse, pondérée par la mesure stationnaire.
+
+    La notion de conductance est cruciale dans l'analyse des propriétés de mélange et de diffusion des marches aléatoires sur des graphes, en particulier dans le contexte des chaînes de Markov réversibles.
+\end{definition}
+
+La distribution \(\pi : V \rightarrow (0, +\infty)\) dans une marche aléatoire réversible est souvent appelée \textbf{distribution d'équilibre} ou \textbf{mesure stationnaire}. Cette distribution est caractérisée par le fait qu'elle ne change pas au fil du temps lorsque la chaîne est observée. En d'autres termes, si la marche aléatoire commence avec la distribution \(\pi\), elle maintiendra cette même distribution à chaque étape subséquente.\\
+
+L'équilibre est atteint lorsque, pour chaque sommet \(x\), le taux total de probabilité "entrant" dans \(x\) est égal au taux total de probabilité "sortant" de \(x\). Formellement, cela signifie que pour tout \(x \in V\),
+\[
+\sum_{y \in V} \pi(y)p(y, x) = \pi(x) = \sum_{y \in V} \pi(x)p(x, y)
+\]
+Cette équation exprime le fait que la probabilité d'être en \(x\) est conservée à travers les transitions de la marche. 
+
+La relation avec la conductance, définie par \(C(x, y) = \pi(x)p(x, y)\), est clé dans la compréhension de cet équilibre. La réversibilité, impliquant que \(C(x, y) = C(y, x)\), assure que pour chaque paire de sommets \(x, y\), la quantité de "flux" de probabilité de \(x\) à \(y\) est équilibrée par le flux de \(y\) à \(x\). Cela crée un système en équilibre dynamique où, bien que les probabilités puissent circuler entre les états, la distribution globale reste invariante dans le temps.
+
+\begin{notation}
+    On utilise de manière interchangée \(\pi(x)\) et \(\pi_x\) afin de désigner la mesure \(\pi\) du sommet \(x\) du graphe.
+    \[
+        \pi_x = \pi(x)
+    \]
+\end{notation}
+\begin{remark}
+    Bien que l'on parle souvent des \((\pi_x)_{x \in V}\) en termes de probabilité, il est plus précis de les considérer comme une mesure. En mathématiques, une \textbf{mesure} est une fonction qui assigne un nombre non négatif (potentiellement infini) à certains sous-ensembles d'un ensemble donné, de manière à quantifier le "volume" ou la "taille" de ces sous-ensembles. En revanche, une \textbf{probabilité} est une mesure spéciale qui assigne un nombre réel entre 0 et 1 à des événements (sous-ensembles) dans un espace probabilisé, avec la propriété que la probabilité de l'espace entier est 1.
+    
+    Pour convertir une mesure en probabilité, on peut normaliser la mesure. Cela implique de diviser chaque valeur de la mesure par la somme totale des mesures sur tous les sous-ensembles considérés. Dans le contexte d'une chaîne de Markov, si \(\pi\) est initialement une mesure, on peut la transformer en une distribution de probabilité en normalisant chaque \(\pi_x\) tel que :
+    \[
+    \pi'_x = \frac{\pi_x}{\sum_{y \in V} \pi_y}
+    \]
+    où \(\pi'_x\) représente la probabilité normalisée d'être dans l'état \(x\). Après cette normalisation, la somme des \(\pi'_x\) pour tous les \(x \in V\) sera égale à 1, satisfaisant ainsi l'une des propriétés fondamentales d'une probabilité.
+    \begin{notation}
+        Sans perte de généralité, on pourra, selon le cas, faire un abus de notation et considérer que les \(\pi_x\) ont déjà été normalisés. Cela permettra d'alléger les explications dans plusieurs cas. \textbf{Il est cependant important de noter qu'une probabilité est une mesure, mais qu'une mesure n'est pas forcément une probabilité, et que les \(\pi_x\) sont des mesures avant tout, mais qui peuvent être normalisées afin d'obtenir une probabilité, tel que démontré ci-haut.}
+    \end{notation}
+\end{remark}
+Dans ce contexte, le vecteur de probabilités \(\pi = (\pi_1, \pi_2, ..., \pi_k)\) pour une chaîne de Markov avec \(k\) états, représente la distribution stationnaire ou d'équilibre. Chaque composant \(\pi_i\) du vecteur indique la probabilité à long terme d'être dans l'état \(i\), après un grand nombre de transitions.
+
+En pratique, cela signifie que si un instant \(N\) est choisi au hasard dans un futur lointain, la probabilité que la chaîne soit dans un état spécifique \(i\) à ce moment est \(\pi_i\). Cette probabilité est indépendante de l'état initial, à condition que la chaîne ait eu suffisamment de temps pour atteindre l'équilibre. La somme des composants de \(\pi\), c'est-à-dire \(\sum_{i=1}^{k} \pi_i\), est égale à 1, ce qui confirme que la chaîne doit se trouver dans l'un des états à tout moment donné. La constance de cette distribution au fil du temps illustre l'état d'équilibre de la chaîne de Markov, où la dynamique des transitions entre états ne modifie pas la distribution globale de probabilité, malgré le mouvement continu entre les différents états du système.
+
+\begin{notation}
+    Considérons un graphe \( G = (V, E) \). Pour deux sommets \( x, y \in V \), \(y \sim x\) indique que \(y\) est un voisin de \(x\).
+    
+    On utilisera souvent
+    \[
+        \sum_{y \sim x}\cdot
+    \]
+    afin de désigner une somme sur tous les \(y\) qui sont voisins de \(x\). Cette notation est utilisée pour désigner des opérations qui s'appliquent ou se réfèrent spécifiquement aux voisins de \( x \) dans le graphe.
+
+    \begin{remark}
+        Dès qu'une conductance apparaît comme coefficient dans une somme sur $y \sim x$, on a automatiquement l'égalité suivante:
+        \[\sum_{y \sim x}c(x,y)\cdot = \sum_{y \in V}c(x,y)\cdot\]
+        Car deux sommets qui de sont pas reliés par une arête ont une conductance équivalente à 0.
+    \end{remark}
+\end{notation}
+
+\begin{prop}
+    Pour une chaîne de Markov, la mesure stationnaire \(\pi(x)\) peut être dérivée des conductances \(c(x, y) = \pi(x)p(x, y)\) par le raisonnement suivant :
+\[
+\pi(x) = \sum_{y \sim x} c(x, y) = \sum_{y \sim x} \pi(x)p(x, y) = \pi(x) \sum_{y \sim x} p(x, y) = \pi(x)
+\]
+car \(\sum_{y \sim x} p(x, y) = 1\).\\
+
+Ensuite, la probabilité de transition \(p(x, y)\) peut être exprimée comme:
+\[
+p(x, y) = \frac{c(x, y)}{\sum_{y \sim x} c(x, y)}
+\]
+\end{prop}
+
+\begin{remark}
+    Dans le cas d'une marche aléatoire réversible sur un graphe \( G = (V, E) \), considérons un cycle formé par une séquence de sommets \( x_1, \ldots, x_n \) tels que chaque \( x_i \) est voisin de \( x_{i+1} \) (c'est-à-dire \( x_i \sim x_{i+1} \)) et \( x_n = x_1 \). 
+
+    La propriété de réversibilité d'une marche aléatoire implique que le produit des probabilités de transition le long du cycle est le même dans les deux sens. Formellement, cela signifie que:
+    \[
+    \prod_{i=1}^{n}p(x_i, x_{i+1}) = \prod_{i=1}^{n}p(x_{n+1-i}, x_{n-i})
+    \]
+    où \( p(x, y) \) est la probabilité de transition de l'état \( x \) à l'état \( y \), et par convention, \( x_{n+1} = x_1 \).
+
+    Cette égalité découle de la propriété de réversibilité, qui stipule que \( p(x, y)\pi(x) = p(y, x)\pi(y) \) pour tous les sommets \( x, y \) dans \( V \). Elle met en évidence le fait qu'une marche réversible sur un cycle conserve le même "poids" de probabilité dans chaque direction du cycle.
+\end{remark}
 
 \begin{definition}[Fonction Harmonique]
     Une fonction \(f\) est dite \textbf{harmonique} sur un ensemble de sommets \(S\) d'un graphe si, pour chaque sommet \(v \in S\), la valeur de \(f\) en \(v\) est égale à la moyenne pondérée des valeurs de \(f\) sur les sommets voisins de \(v\). Formellement, pour un sommet \(v\) et ses voisins \(N(v)\),
     \[
     f(v) = \sum_{u \in N(v)} p(v, u) f(u)
     \]
-    où \(p(v, u)\) est la probabilité de transition du sommet \(v\) au sommet \(u\).
+    où \(p(v, u)\) est la probabilité de transition du sommet \(v\) au sommet \(u\). On dit que \(f\) est harmonique sur \(A \subset V\) si \(f\) est harmonique \(\forall x \in A\).
 \end{definition}
 
-\begin{remark}[\(\pi\) n'est pas nécessairement harmonique, même dans le cas d'une marche réversible]
+\section*{Principes du maximum, de l'unicité, de l'existence}
+
+\begin{definition}[Principe du Maximum en Marches Aléatoires et Graphes]
+    Considérons une marche aléatoire sur un graphe fini \( G = (V, E) \). Soit \( f: V \rightarrow \mathbb{R} \) une fonction définissant une certaine propriété des sommets du graphe (par exemple, une probabilité d'atteindre un état spécifique). Le principe du maximum stipule que si \( f \) est harmonique sur \( V \) (c'est-à-dire \( f(x) = \sum_{y \sim x} p(x, y) f(y) \) pour tout \( x \in V \)), alors le maximum (et le minimum) de \( f \) est atteint sur les sommets à la frontière du graphe.
     
-Selon la définition donnée d'une \textbf{marche aléatoire réversible}, la fonction \(\pi : V \rightarrow (0, +\infty)\) est une distribution qui satisfait la condition de réversibilité \(\pi(x)p(x, y) = \pi(y)p(y, x)\) pour tous les sommets \(x, y \in V\). Cette condition assure que \(\pi\) est une mesure stationnaire ou d'équilibre pour la chaîne de Markov, mais elle ne nécessite pas que \(\pi\) soit une fonction harmonique.
-
-Ainsi, bien que la mesure stationnaire \(\pi\) joue un rôle crucial dans la caractérisation des marches aléatoires réversibles, elle n'est pas synonyme d'une fonction harmonique selon la définition classique de l'harmonicité dans le cadre des processus stochastiques et de la théorie des graphes.
-
-\end{remark}
-
-\begin{definition}[Conductance]
-La \textbf{conductance} entre deux sommets \(x\) et \(y\) dans un graphe \(G = (V, E)\), dans le contexte d'une marche aléatoire réversible, est définie par \(C(x, y) = \pi(x)p(x, y)\), où :
-\begin{itemize}
-    \item \(\pi : V \rightarrow (0, +\infty)\) est une distribution sur les sommets du graphe, souvent interprétée comme une mesure stationnaire ou une distribution d'équilibre.
-    \item \(p(x, y)\) est la probabilité de transition de l'état \(x\) à l'état \(y\).
-\end{itemize}
-
-La conductance mesure la "facilité" ou la "capacité" avec laquelle la marche peut se déplacer de \(x\) à \(y\), en tenant compte de la distribution \(\pi\). Dans le cadre d'une marche aléatoire réversible, où \(\pi(x)p(x, y) = \pi(y)p(y, x)\) pour tous les sommets \(x, y \in V\), la conductance satisfait la propriété de symétrie \(C(x, y) = C(y, x)\). Cette symétrie reflète la nature réversible de la marche, où la probabilité de transition dans un sens est équilibrée par la probabilité de transition dans le sens inverse, pondérée par la mesure stationnaire.
-
-La notion de conductance est cruciale dans l'analyse des propriétés de mélange et de diffusion des marches aléatoires sur des graphes, en particulier dans le contexte des chaînes de Markov réversibles.
+    En d'autres termes, pour une marche aléatoire sur un graphe, si une fonction \( f \) est définie de manière à respecter l'équilibre local des probabilités en chaque sommet (harmonicité), alors les valeurs extrêmes de cette fonction se trouvent sur les sommets qui n'ont pas de voisins en dehors du graphe (les "frontières" du graphe).
+    
+    Ce principe est particulièrement utile pour analyser les comportements limites des marches aléatoires, notamment pour déterminer les probabilités d'atteindre certains états ou les temps d'atteinte.
 \end{definition}
+
+
 \end{document}
