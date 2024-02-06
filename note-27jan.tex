@@ -6,8 +6,18 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage[many]{tcolorbox}
+
 \usepackage{tikz}
+\usetikzlibrary{positioning, fit, shapes}
+\usetikzlibrary{shapes,decorations,arrows,positioning}
+\tikzstyle{vertex}=[circle, draw, fill=blue!20]
+\tikzstyle{set}=[rectangle, rounded corners, draw=black, dashed, inner sep=10pt, label=below:#1]
+\tikzstyle{wire}=[thin]
+\tikzstyle{cable}=[thick, red, ->, >=stealth]
+\tikzstyle{legend} = [rectangle, rounded corners, fill=gray!10, minimum width=2cm, draw=black, align=left]
+
 \usepackage[letterpaper, total={6in, 8in}]{geometry}
+
 
 \title{MAT2719 -- notes de cours détaillées}
 \date{Selon le cours d'Alexander Fribergh, Hiver 2024}
@@ -114,34 +124,45 @@ En d'autres termes, un graphe est une structure de données utilisée pour modé
 Les graphes sont largement utilisés dans divers domaines pour modéliser et résoudre des problèmes complexes. En informatique, ils servent à représenter des réseaux sociaux, des itinéraires de navigation, des structures de données, et bien plus encore. Dans le domaine des transports, les graphes sont utilisés pour optimiser les itinéraires, la logistique et la gestion du trafic. En biologie, ils aident à modéliser les interactions entre protéines dans les réseaux de régulation génétique. En mathématiques, les graphes sont un outil essentiel pour la théorie des graphes, tandis qu'en chimie, ils sont utilisés pour représenter des molécules. En résumé, les graphes sont une structure de données polyvalente avec de nombreuses applications pratiques.
 
 \begin{definition}[Chaîne de Markov]
-    Une \textbf{chaîne de Markov}, notée $(Z_n)_{n \geq 0}$, est un type spécifique de processus stochastique discret satisfaisant la propriété de Markov, qui stipule que, donné l'état présent, les états futurs sont indépendants des états passés. Formellement, pour tous les états $i$ et $j$ et tout $n \geq 0$, on a :
+    Une \textbf{chaîne de Markov}, notée $(X_n)_{n \geq 0}$, est un type spécifique de processus stochastique discret satisfaisant la propriété de Markov, qui stipule que, donné l'état présent, les états futurs sont indépendants des états passés. Formellement, pour tous les états $i$ et $j$ et tout $n \geq 0$, on a :
     \[
     P(Z_{n+1} = j | Z_n = i, Z_{n-1} = i_{n-1}, \ldots, Z_0 = i_0) = P(Z_{n+1} = j | Z_n = i)
     \]
 \end{definition}
 
-\begin{definition}[Marche aléatoire sur un graphe]
-    Considérons un graphe $G = (V, E)$, où chaque sommet dans $V$ représente un état possible et chaque arête dans $E$ indique une transition possible entre deux états. Une \textbf{marche aléatoire} sur ce graphe est un processus où, à chaque étape, le mouvement de l'état actuel vers un état voisin est déterminé par une règle de probabilité. 
+\begin{pourquoi}[Chaîne de Markov]
+    Un lecteur n'ayant pas de connaissances approfondies des processus stochastiques pourrait se demander l'intérêt d'étudier les chaînes de Markov dans le contexte des marches et graphes aléatoires.
 
-    Plus formellement, si on note par $Z_n$ l'état de la marche à l'étape $n$, alors pour tout état $i \in V$ et tout état voisin $j \in V$ (tel que $(i, j) \in E$), la probabilité de transition de $i$ à $j$ est donnée par $p_{ij}$, un élément de la matrice de probabilités de transition $P$. La marche aléatoire commence à un état initial donné et se déplace d'un sommet à un autre suivant les probabilités définies dans $P$.
-\end{definition}
+    On verra plus tard qu'une marche aléatoire \((X_n)_{n\in\mathbb{N}}\) sur un graphe \(G\) est essentiellement une chaîne de Markov, mais plus précisément dont les états possibles correspondent exactement aux noeuds de \(G\), et dont les probabilités de transition correspondent aux probabilités de \guillemotleft passage\guillemotright\ ou de \guillemotleft transition\guillemotright\ associées aux arêtes de \(G\).
 
-\begin{pourquoi}
-    La distinction entre une chaîne de Markov et une marche aléatoire sur un graphe est importante pour comprendre les dynamiques spécifiques de la marche. Tandis qu'une chaîne de Markov se focalise sur la propriété de mémoire limitée des états futurs, une marche aléatoire sur un graphe met en lumière la structure sous-jacente du graphe et la manière dont cette structure influence les transitions entre les états. Chaque marche aléatoire sur un graphe est un exemple de chaîne de Markov, illustrant comment les règles de probabilité de transitions entre les sommets modèlent le comportement du processus stochastique.
+    Il est cependant important de ne pas confondre le concept de chaîne de Markov avec celui d'une marche aléatoire; même si une chaîne de Markov peut souvent être représentée à l'aide d'un graphe, ce ne sont pas toutes les chaînes de Markov qui sont des marches aléatoires sur des graphes.
+    
+    Dans le cas général de la chaîne de Markov, le graphe utilisé pour représenter les états possibles de la chaîne et les probabilités de transition ne représente pas nécessairement un graphe précis -- il permet simplement une représentation claire et concise de la distribution de probabilités sous-jacente au processus stochastique en question.
 \end{pourquoi}
 
-Pour être répétitif: une marche aléatoire discrète est généralement considérée comme un exemple classique de chaîne de Markov. Dans une marche aléatoire discrète, l'état futur (c'est-à-dire le prochain sommet visité dans le graphe) dépend uniquement de l'état actuel et pas des états précédents. Cette caractéristique satisfait la propriété fondamentale des chaînes de Markov, où la probabilité de transition vers l'état suivant ne dépend que de l'état actuel.
+\pagebreak \section{Marche aléatoire}
+
+\begin{definition}[Marche aléatoire sur un graphe]
+    Une \textbf{marche aléatoire} sur un graphe \(G = (V, E)\) est une séquence de variables aléatoires \((X_n)_{n\in\mathbb{N}}\) où chaque \(X_n\) représente la position d'un marcheur sur les sommets du graphe à l'étape \(n\). La marche est définie par les conditions suivantes :
+    \begin{itemize}
+        \item \(X_0\) est le sommet de départ, souvent choisi selon une distribution de probabilité spécifique sur \(V\).
+        \item Pour chaque étape \(n > 0\), la probabilité que le marcheur se déplace de l'état \(i\) à l'état \(j\) est donnée par \(P(X_{n+1} = y | X_n = x)\), pour tous \(x, y \in V\), où \(P\) est la matrice de probabilités de transition du graphe.
+        %\item La marche est dite \textit{réversible} si elle satisfait la condition de réversibilité: pour tous \(i, j \in V\), \(\pi(i)P(i, j) = \pi(j)P(j, i)\), où \(\pi\) est une distribution stationnaire associée à la marche.
+    \end{itemize}
+\end{definition}
+
+Pour être répétitif: tel qu'indiqué dans la section précédente, une marche aléatoire discrète est généralement considérée comme un exemple classique de chaîne de Markov. Dans une marche aléatoire discrète, l'état futur (c'est-à-dire le prochain sommet visité dans le graphe) dépend uniquement de l'état actuel et pas des états précédents. Cette caractéristique satisfait la propriété fondamentale des chaînes de Markov, où la probabilité de transition vers l'état suivant ne dépend que de l'état actuel.
 
 En termes simples, dans une marche aléatoire discrète sur un graphe, lorsqu'un individu se déplace d'un sommet à un autre, son choix du prochain sommet à visiter dépend uniquement de sa position actuelle et des probabilités de transition associées à cette position, et non de la manière dont il est arrivé à ce sommet. Cette indépendance par rapport à l'historique du chemin parcouru est exactement ce qui définit une chaîne de Markov.
 
 \begin{notation}[Probabilité de transition dans une marche aléatoire]
-    Considérons une marche aléatoire \( (Z_n)_{n \in \mathbb{N}} \) sur un graphe. On définira la probabilité de transition \( p(x, y) \) d'un sommet \( x \) à un sommet \( y \) comme la probabilité que la marche se déplace de \( x \) à \( y \) en une seule étape. Formellement, pour deux sommets \( x \) et \( y \) du graphe,
+    Considérons une marche aléatoire \( (X_n)_{n \in \mathbb{N}} \) sur un graphe. On définira la probabilité de transition \( p(x, y) \) d'un sommet \( x \) à un sommet \( y \) comme la probabilité que la marche se déplace de \( x \) à \( y \) en une seule étape. Formellement, pour deux sommets \( x \) et \( y \) du graphe,
 
     \[
-    p(x, y) = P(Z_{n+1} = y | Z_n = x)
+    p(x, y) = P(X_{n+1} = y | X_n = x) = P(X_1 = y | X_0 = x)\text{ (par la propriété de Markov)}
     \]
 
-    où \( P(Z_{n+1} = y | Z_n = x) \) est la probabilité conditionnelle que le prochain état de la marche soit \( y \), étant donné que l'état actuel est \( x \).
+    où \( P(X_{n+1} = y | X_n = x) \) est la probabilité conditionnelle que le prochain état de la marche soit \( y \), étant donné que l'état actuel est \( x \).
 \end{notation}
 
 \begin{remark}[lien entre marche aléatoire sur un graphe et sur la droite des entiers]
@@ -161,29 +182,29 @@ En termes simples, dans une marche aléatoire discrète sur un graphe, lorsqu'un
     Dans cette interprétation, une \textit{marche aléatoire sur} \(\mathbb{Z}\) est une marche sur le graphe \(G\), où la probabilité de transition de l'état \(i\) à l'état \(j\) (c'est-à-dire de l'entier \(i\) à l'entier \(j\)) est déterminée par une matrice de probabilités ou une règle spécifique. Cette approche permet une plus grande flexibilité dans la définition des transitions et peut inclure des marches avec des sauts plus longs ou des règles de transition complexes.
 \end{remark}
 
-\begin{definition}[Temps de frappe]
+\begin{definition}[Temps d'atteinte]
     Considérons un graphe \( G = (V, E) \) et un sous-ensemble \( U \subseteq V \). Soit \( W = V \setminus U \) et \( s \in U \).\\
 
-    Le \textbf{temps de frappe} \( T_W \) pour un ensemble \( W \) est le premier instant \( n \geq 0 \) où la marche aléatoire \( Z_n \) atteint un sommet dans \( W \). Formellement, 
+    Le \textbf{temps d'atteinte} \( T_W \) pour un ensemble \( W \) est le premier instant \( n \geq 0 \) où la marche aléatoire \( (X_n)_{n\in\mathbb{N}} \) atteint un sommet dans \( W \). Formellement, 
     \[
-    T_W = \min\{n \geq 0 : Z_n \in W\}
+    T_W = \min\{n \geq 0 : X_n \in W\}
     \]
 
-    Le \textbf{temps de frappe strictement positif} \(T_W^+\) pour un ensemble \( W \) est le premier instant \( n > 0 \) où la marche aléatoire \( Z_n \) atteint un sommet dans \( W \). Formellement,
+    Le \textbf{temps d'atteinte strictement positif} \(T_W^+\) pour un ensemble \( W \) est le premier instant \( n > 0 \) où la marche aléatoire \( (X_n)_{n\in\mathbb{N}} \) atteint un sommet dans \( W \). Formellement,
     \[
-    T_W^+ = \min\{n > 0 : Z_n \in W\}
+    T_W^+ = \min\{n > 0 : X_n \in W\}
     \]
 \end{definition}
 
 \begin{definition}[Transience et Récurrence]
-    Soit une marche aléatoire \( (Z_n)_{n \in \mathbb{N}} \) sur un graphe \( G = (V, E) \) et soit \( x \in V \) un sommet du graphe. 
+    Soit une marche aléatoire \( (X_n)_{n \in \mathbb{N}} \) sur un graphe \( G = (V, E) \) et soit \( x \in V \) un sommet du graphe. 
     
     \begin{itemize}
         \item \textbf{Récurrence :} Le sommet \( x \) est dit \textit{récurrent} si la probabilité qu'il soit revisité est de 1, c'est-à-dire si la probabilité que la marche, ayant commencé en \( x \), retourne à \( x \) en un temps fini est de 1. Formellement, \( x \) est récurrent si
         \[
         P_x[T_x^+ < \infty] = 1
         \]
-        où \( T_x^+ \) est le temps de frappe strictement positif de \( x \), c'est-à-dire le premier instant \( n > 0 \) tel que \( Z_n = x \).
+        où \( T_x^+ \) est le temps de frappe strictement positif de \( x \), c'est-à-dire le premier instant \( n > 0 \) tel que \( X_n = x \).
     
         \item \textbf{Transience :} Le sommet \( x \) est dit \textit{transient} si la probabilité qu'il soit revisité est inférieure à 1. Autrement dit, \( x \) est transient si la probabilité que la marche ne retourne jamais à \( x \) après l'avoir quitté est non nulle. Formellement, \( x \) est transient si
         \[
@@ -196,7 +217,7 @@ En termes simples, dans une marche aléatoire discrète sur un graphe, lorsqu'un
 \section{Réversibilité d'une marche aléatoire}
 
 \begin{definition}[Marche aléatoire réversible]
-    Considérons une \textbf{marche aléatoire réversible} définie sur un graphe $G = (V, E)$, où $(Z_n)_{n \in \mathbb{N}}$ représente une chaîne de Markov sur les sommets du graphe. Une telle marche est dite réversible par rapport à une distribution $\pi : V \rightarrow (0, +\infty)$ si elle satisfait la condition de réversibilité suivante :
+    Considérons une \textbf{marche aléatoire réversible} définie sur un graphe $G = (V, E)$, où $(X_n)_{n \in \mathbb{N}}$ représente une chaîne de Markov sur les sommets du graphe. Une telle marche est dite réversible par rapport à une distribution $\pi : V \rightarrow (0, +\infty)$ si elle satisfait la condition de réversibilité suivante :
 
     \[
     \pi(x)p(x, y) = \pi(y)p(y, x) \quad \text{pour tous les sommets } x, y \in V
@@ -302,15 +323,80 @@ p(x, y) = \frac{c(x, y)}{\sum_{y \sim x} c(x, y)}
     où \(p(v, u)\) est la probabilité de transition du sommet \(v\) au sommet \(u\). On dit que \(f\) est harmonique sur \(A \subset V\) si \(f\) est harmonique \(\forall x \in A\).
 \end{definition}
 
+\section{Applications des marches réversibles sur les circuits électriques}
+
+On a déjà discutéans le contexte de circuits électriques
+
 \section*{Principes du maximum, de l'unicité, de l'existence}
 
 \begin{definition}[Principe du Maximum en Marches Aléatoires et Graphes]
-    Considérons une marche aléatoire sur un graphe fini \( G = (V, E) \). Soit \( f: V \rightarrow \mathbb{R} \) une fonction définissant une certaine propriété des sommets du graphe (par exemple, une probabilité d'atteindre un état spécifique). Le principe du maximum stipule que si \( f \) est harmonique sur \( V \) (c'est-à-dire \( f(x) = \sum_{y \sim x} p(x, y) f(y) \) pour tout \( x \in V \)), alors le maximum (et le minimum) de \( f \) est atteint sur les sommets à la frontière du graphe.
+    Soit \(G = (V, E)\) un graphe fini et \(f: V \rightarrow \mathbb{R}\) une fonction harmonique, c'est-à-dire \(f(x) = \sum_{y \sim x} p(x, y) f(y)\) pour tout \(x \in V\). Le principe du maximum affirme que le maximum et le minimum de \(f\) sont atteints aux sommets de la frontière de \(G\), là où \(x\) n'a pas de voisins extérieurs. Ce principe aide à déterminer les comportements extrêmes dans les marches aléatoires, tels que les probabilités maximales d'atteinte et les temps d'atteinte.
+    \end{definition}
     
-    En d'autres termes, pour une marche aléatoire sur un graphe, si une fonction \( f \) est définie de manière à respecter l'équilibre local des probabilités en chaque sommet (harmonicité), alors les valeurs extrêmes de cette fonction se trouvent sur les sommets qui n'ont pas de voisins en dehors du graphe (les "frontières" du graphe).
-    
-    Ce principe est particulièrement utile pour analyser les comportements limites des marches aléatoires, notamment pour déterminer les probabilités d'atteindre certains états ou les temps d'atteinte.
-\end{definition}
 
+\pagebreak Soit \(A\) et \(Z\) deux sous-ensembles disjoints de \(G\). On appelle voltage (ou tension, ou potentiel) une fonction sur les sites de \(G\), qui est harmonique sur \((A \cup Z)^C\), constante sur \(A\) et constante sur \(Z\).
+
+\begin{definition}[Voltage, Tension, ou Potentiel]
+    Soit \(G = (V, E)\) un graphe, où \(V\) représente un ensemble de sommets et \(E\) représente un ensemble d'arêtes connectant ces sommets. Soient \(A\) et \(Z\) deux sous-ensembles disjoints de \(V\). Un \textbf{voltage} (ou tension, ou potentiel) est défini comme une fonction \(f: V \rightarrow \mathbb{R}\) qui satisfait les conditions suivantes :
+    \begin{itemize}
+        \item \(f\) est harmonique sur \((A \cup Z)^C\), c'est-à-dire pour tout sommet \(x \in (A \cup Z)^C\), la valeur de \(f\) en \(x\) est égale à la moyenne pondérée de \(f\) sur les voisins de \(x\).
+        \item \(f\) est constante sur \(A\) et constante sur \(Z\), représentant typiquement des valeurs de potentiel fixées aux "bornes" ou aux "frontières" du graphe.
+    \end{itemize}
+    La différence de potentiel (voltage) entre deux points \(a \in A\) et \(z \in Z\) est alors donnée par la différence \(f(a) - f(z)\). Cette notion est fondamentale dans l'analyse des propriétés de transport et de diffusion sur les graphes, modélisant par exemple le comportement électrique dans les réseaux électriques ou les propriétés de circulation dans divers systèmes dynamiques.
+\end{definition}
+\begin{remark}
+    Dans le contexte d'un système électrique comme celui d'une voiture, la différence de potentiel (voltage) entre la borne positive et la borne négative de la batterie est ce qui permet à l'électricité de circuler et au véhicule de fonctionner. Lors du survoltage d'une batterie, la différence de potentiel entre la borne positive et la borne négative de la voiture nécessitant un survoltage est augmentée par la connexion à une autre batterie avec un voltage supérieur. 
+
+    Pour illustrer, si une voiture a besoin d'être survoltée parce que sa batterie a une tension trop faible, et une autre voiture (qui survolte) fournit un voltage supérieur via des câbles de démarrage, cela permet de rétablir le fonctionnement électrique de la première voiture. 
+
+    Ce processus peut être modélisé par un graphe, où les sommets connectés à la borne positive de chaque batterie sont dans \(A\), ceux connectés à la borne négative sont dans \(Z\), et le flux d'électricité est représenté par le potentiel harmonique sur les autres sommets du graphe.
+
+    \begin{example}
+        Le graphe ci-dessous représente un modèle simplifié du circuit électrique d'une voiture avec une batterie faible.
+        
+        Les bornes "+" et "-" indiquent respectivement la borne positive et la borne négative de la batterie. La composante au milieu symbolise le circuit électrique de la voiture, incluant des composants tels que les phares, le démarreur et la radio. Dans ce modèle, la différence de potentiel entre les bornes "+" et "-" est insuffisante pour surmonter la résistance interne du circuit, ce qui empêche le démarrage de la voiture. Cette situation illustre un problème commun dans les véhicules avec des batteries déchargées ou en fin de vie.
+        \begin{center}
+            \begin{tikzpicture}[auto, node distance=3cm]
+                % Noeuds
+                \node[vertex] (plus) {+};
+                \node[vertex, right=of plus] (A) {circuit};
+                \node[vertex, right=of A] (minus) {-};
+                \node[set, fit=(A)] (circuit) {};
+                \draw[wire] (plus) -- (circuit);
+                \draw[wire] (minus) -- (circuit);
+
+                % Ensemble bornes
+                \node[set=Borne positive, fit=(plus)] {};
+                \node[set=Borne négative, fit=(minus)] {};
+            \end{tikzpicture}
+        \end{center}
+            
+
+        \bigskip % Ajoute un espace vertical pour la séparation
+        
+        Observons maintenant un second graphe, qui étend le modèle précédent en introduisant une solution au problème de la batterie faible: le survoltage. En ajoutant une batterie externe avec une charge suffisante, représentée par les bornes supplémentaires "+'" (borne positive de la batterie survoltée) et "-'" (borne négative de la batterie survoltée), nous augmentons artificiellement la différence de potentiel entre les bornes de la batterie faible. Les câbles de survoltage, illustrés par les arêtes reliant "+'" à "+" et "-'" à "-", permettent de transférer l'énergie de la batterie survoltée à la batterie faible. Ce processus augmente le potentiel disponible pour alimenter le circuit électrique de la voiture, permettant ainsi de surmonter la résistance du circuit et de démarrer le moteur. Cette approche est couramment utilisée pour démarrer des véhicules dont la batterie ne possède pas assez de charge pour initier le processus de démarrage par eux-mêmes.
+        \begin{center}
+            \begin{tikzpicture}[auto, node distance=3cm]
+                % Noeuds
+                \node[vertex] (plus) {+};
+                \node[vertex, right=of plus] (A) {Circuit};
+                \node[vertex, right=of A] (minus) {-};
+            
+                % Connexion de la batterie faible au circuit
+                \draw[wire] (plus) -- (A);
+                \draw[wire] (minus) -- (A);
+            
+                % Ajout des bornes de la batterie de survoltage
+                \node[vertex, left=1cm of plus] (plusPrime) {+'};
+                \node[vertex, right=1cm of minus] (minusPrime) {-'};
+            
+                % Câbles de survoltage
+                \draw[cable] (plusPrime) -- (plus);
+                \draw[cable] (minusPrime) -- (minus);
+            \end{tikzpicture}
+        \end{center}
+    \end{example}
+
+\end{remark}
 
 \end{document}
